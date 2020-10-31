@@ -114,7 +114,12 @@ const Student = () => {
         partnerVideo.current.srcObject = _stream;
       }
     });
+
     peer.signal(teacherSignal);
+
+    socket.current.on("update-board", (data: any) => {
+      console.log("student gets updated pixel array", data);
+    });
   };
 
   return (
