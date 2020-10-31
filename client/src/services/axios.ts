@@ -7,11 +7,13 @@ const instance: AxiosInstance = axios.create({
 export const postCalibration = async (data: {
   roomId: string;
   boardImg: string;
-}): Promise<any> => {
+}): Promise<{ imgUri: string }> => {
   try {
-    await instance.post("/board/calibrate", data);
+    const res: AxiosResponse = await instance.post("/board/calibrate", data);
+    return res.data;
   } catch (err) {
     errorHandler(err);
+    return { imgUri: "" };
   }
 };
 

@@ -13,6 +13,7 @@ const Teacher = () => {
   const [isTeacherReady, setIsTeacherReady] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imgSrc, setImgSrc] = useState<string>("");
+  const [isResponse, setIsResponse] = useState<boolean>(false);
 
   const socket = useRef<any>();
   const partnerVideo = useRef<any>();
@@ -110,9 +111,10 @@ const Teacher = () => {
   };
 
   const postImage = (imageData: string) => {
-    console.log("base64 data uri of image to be sent", imageData, "...");
-    postCalibration({ roomId: roomCode, boardImg: imageData }).then(() => {
-      setImgSrc("");
+    postCalibration({ roomId: roomCode, boardImg: imageData }).then((res) => {
+      setImgSrc(res.imgUri);
+      setIsResponse(true);
+      console.log(res);
     });
   };
 
@@ -139,11 +141,26 @@ const Teacher = () => {
                   src={imgSrc}
                   className="mx-auto w-11/12 md:3/4 lg:w-2/5 border-solid border-2 border-black"
                 />
-                <button onClick={() => postImage(imgSrc)} className="stdButton">
-                  Send Preview
-                </button>
-                <button onClick={() => setImgSrc("")} className="stdButton">
-                  Take again
+                {!isResponse ? (
+                  <button
+                    onClick={() => postImage(imgSrc)}
+                    className="stdButton"
+                  >
+                    Send Preview
+                  </button>
+                ) : (
+                  <button onClick={() => setImgSrc("")} className="stdButton">
+                    Seems good!
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setImgSrc("");
+                    setIsResponse(false);
+                  }}
+                  className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
+                >
+                  Click again
                 </button>
               </>
             )}
