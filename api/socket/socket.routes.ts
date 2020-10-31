@@ -65,6 +65,7 @@ export const socketController = (socket: socketIO.Socket) => {
   });
   socket.on("close-room", (data) => {
     console.log(`socket::close-room - room: '${data.roomCode}' is closed.`);
+    socket.to(data.roomCode).broadcast.emit("close-student");
     CacheService.getInstance().getCache().del(data.roomCode);
     socket.disconnect(true);
   });

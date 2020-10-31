@@ -17,6 +17,19 @@ export const postCalibration = async (data: {
   }
 };
 
+export const postBoard = async (data: {
+  roomId: string;
+  boardImg: string;
+}): Promise<{ success: boolean }> => {
+  try {
+    const res: AxiosResponse = await instance.post("/board/emit", data);
+    return res.data;
+  } catch (err) {
+    errorHandler(err);
+    return { success: false };
+  }
+};
+
 const errorHandler = (err: AxiosError) => {
   let errMessage: string;
   switch (err.response?.status) {

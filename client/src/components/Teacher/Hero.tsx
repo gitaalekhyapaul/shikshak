@@ -3,7 +3,7 @@ import Peer from "simple-peer";
 import io from "socket.io-client";
 import Webcam from "react-webcam";
 
-import { postCalibration } from "../../services/axios";
+import { postCalibration, postBoard } from "../../services/axios";
 
 const Teacher = () => {
   const [yourID, setYourID] = useState<string>("");
@@ -14,12 +14,14 @@ const Teacher = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imgSrc, setImgSrc] = useState<string>("");
   const [isResponse, setIsResponse] = useState<boolean>(false);
+  const [isApproved, setIsApproved] = useState<boolean>(false);
 
   const socket = useRef<any>();
   const partnerVideo = useRef<any>();
   const webcamRef = useRef<any>(null);
 
   let ownSignal: any;
+  let boardSrc: string;
 
   useEffect(() => {
     socket.current = io.connect();
@@ -35,8 +37,10 @@ const Teacher = () => {
   }, []);
 
   const capture = useCallback(() => {
+    // setTimeout(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
+    // }, 5000);
   }, [webcamRef, setImgSrc]);
 
   const createRoomHandler = () => {
@@ -77,7 +81,7 @@ const Teacher = () => {
       stream,
     });
 
-    peer.on("signal", (data) => {
+    peer.on("signal", (data: any) => {
       ownSignal = data;
       setIsTeacherReady(true);
       setIsLoading(false);
@@ -92,7 +96,7 @@ const Teacher = () => {
       });
     });
 
-    peer.on("stream", (_stream) => {
+    peer.on("stream", (_stream: MediaStream) => {
       console.log("teacher gets student stream", _stream);
       setCallAccepted(true);
       if (partnerVideo.current) {
@@ -108,6 +112,14 @@ const Teacher = () => {
 
   const disconnect = () => {
     socket.current.emit("close-room", { roomCode });
+    socket.current.close();
+    socket.current.disconnect();
+    console.log(stream);
+    stream?.getTracks().forEach((track) => {
+      track.enabled = false;
+      track.stop();
+    });
+    partnerVideo.current!.srcObject = null;
   };
 
   const postImage = (imageData: string) => {
@@ -118,9 +130,16 @@ const Teacher = () => {
     });
   };
 
+  const sendBoard = () => {
+    boardSrc = webcamRef.current.getScreenshot();
+    postBoard({ roomId: roomCode, boardImg: boardSrc }).then((res) => {
+      console.log(res);
+    });
+  };
+
   return (
     <div className="stdContainer text-center min-h-screen">
-      <h1 className="text-4xl w-full mt-10">Good Morning, शिक्षक!</h1>
+      <h1 className="text-4xl w-full mt-10 h-auto">Namaste, शिक्षक!</h1>
       <div className="w-full">
         {stream && (
           <>
@@ -131,9 +150,14 @@ const Teacher = () => {
                   ref={webcamRef}
                   muted={true}
                   screenshotFormat="image/jpeg"
-                  className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5"
+                  className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5 shadow-2xl"
                   screenshotQuality={1}
                 />
+                {isTeacherReady && !isApproved && (
+                  <button onClick={capture} className="stdButton">
+                    Capture Board
+                  </button>
+                )}
               </>
             ) : (
               <>
@@ -141,7 +165,7 @@ const Teacher = () => {
                   src={imgSrc}
                   className="mx-auto w-11/12 md:3/4 lg:w-2/5 border-solid border-2 border-black"
                 />
-                {!isResponse ? (
+                {!isApproved && !isResponse ? (
                   <button
                     onClick={() => postImage(imgSrc)}
                     className="stdButton"
@@ -149,7 +173,13 @@ const Teacher = () => {
                     Send Preview
                   </button>
                 ) : (
-                  <button onClick={() => setImgSrc("")} className="stdButton">
+                  <button
+                    onClick={() => {
+                      setImgSrc("");
+                      setIsApproved(true);
+                    }}
+                    className="stdButton"
+                  >
                     Seems good!
                   </button>
                 )}
@@ -167,9 +197,9 @@ const Teacher = () => {
 
             {isTeacherReady && roomCode ? (
               <>
-                {!imgSrc && (
-                  <button onClick={capture} className="stdButton">
-                    Capture View
+                {isApproved && (
+                  <button className="stdButton" onClick={sendBoard}>
+                    Send Board
                   </button>
                 )}
                 <h3 className="text-lg">

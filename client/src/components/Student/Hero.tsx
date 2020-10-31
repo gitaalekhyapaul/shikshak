@@ -114,13 +114,30 @@ const Student = () => {
         partnerVideo.current.srcObject = _stream;
       }
     });
+
     peer.signal(teacherSignal);
+
+    socket.current.on("update-board", (data: any) => {
+      console.log("student gets updated pixel array", data);
+    });
+
+    socket.current.on("close-student", () => {
+      socket.current.close();
+      socket.current.disconnect();
+      console.log(stream);
+      stream?.getTracks().forEach((track) => {
+        track.enabled = false;
+        track.stop();
+      });
+      partnerVideo.current!.srcObject = null;
+      userVideo.current!.srcObject = null;
+    });
   };
 
   return (
     <div className="stdContainer text-center min-h-screen">
       <h1 className="text-sm sm:text-2xl md:text-3xl lg:text-4xl w-full mt-1 md:mt-10">
-        Good Morning, student!
+        Let's get learning, Students!
       </h1>
       {stream && (
         <div className="w-full">
