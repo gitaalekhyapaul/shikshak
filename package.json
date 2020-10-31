@@ -1,10 +1,17 @@
 {
   "name": "shikshak",
   "version": "1.0.0",
-  "description": "Shikshak 1.0 by Team !!Coders",
+  "description": "Shikshak 1.0",
   "main": "./build/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./build/app.js",
+    "start:dev": "npx nodemon ./build/app.js",
+    "start:client": "cd client && yarn start",
+    "build": "npx tsc",
+    "build:dev": "npx tsc --watch",
+    "build:client": "cd client && yarn build",
+    "postinstall": "cd client && yarn"
   },
   "repository": {
     "type": "git",
@@ -17,6 +24,9 @@
   },
   "homepage": "https://github.com/gitaalekhyapaul/shikshak#readme",
   "devDependencies": {
+    "@types/node": "^14.14.6",
+    "nodemon": "^2.0.6",
+    "tsc": "^1.20150623.0",
     "typescript": "^4.0.2"
   }
 }

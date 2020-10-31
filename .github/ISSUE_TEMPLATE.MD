@@ -1,11 +1,6 @@
----
-name: Alert!
-about: Kindly adhere to the template and describe the issue.
-title: ''
-labels: ''
-assignees: ''
+# Issue Alert.
 
----
+Kindly adhere to the template!
 
 ## Prerequisites
 
