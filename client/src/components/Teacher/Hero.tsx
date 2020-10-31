@@ -81,7 +81,7 @@ const Teacher = () => {
       stream,
     });
 
-    peer.on("signal", (data) => {
+    peer.on("signal", (data: any) => {
       ownSignal = data;
       setIsTeacherReady(true);
       setIsLoading(false);
@@ -96,7 +96,7 @@ const Teacher = () => {
       });
     });
 
-    peer.on("stream", (_stream) => {
+    peer.on("stream", (_stream: MediaStream) => {
       console.log("teacher gets student stream", _stream);
       setCallAccepted(true);
       if (partnerVideo.current) {
@@ -112,6 +112,14 @@ const Teacher = () => {
 
   const disconnect = () => {
     socket.current.emit("close-room", { roomCode });
+    socket.current.close();
+    socket.current.disconnect();
+    console.log(stream);
+    stream?.getTracks().forEach((track) => {
+      track.enabled = false;
+      track.stop();
+    });
+    partnerVideo.current!.srcObject = null;
   };
 
   const postImage = (imageData: string) => {
@@ -131,7 +139,7 @@ const Teacher = () => {
 
   return (
     <div className="stdContainer text-center min-h-screen">
-      <h1 className="text-4xl w-full mt-10">Good Morning, शिक्षक!</h1>
+      <h1 className="text-4xl w-full mt-10 h-auto">Namaste, शिक्षक!</h1>
       <div className="w-full">
         {stream && (
           <>
@@ -142,7 +150,7 @@ const Teacher = () => {
                   ref={webcamRef}
                   muted={true}
                   screenshotFormat="image/jpeg"
-                  className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5"
+                  className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5 shadow-2xl"
                   screenshotQuality={1}
                 />
                 {isTeacherReady && !isApproved && (
