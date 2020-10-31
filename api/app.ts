@@ -16,7 +16,7 @@ dotenvConfig();
 const app: Express = express();
 
 app.use(cors());
-app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.json({ limit: "10MB" }));
 
 app.use("/api/v1", boardRoutes);
 

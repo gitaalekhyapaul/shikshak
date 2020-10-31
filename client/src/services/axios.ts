@@ -9,8 +9,7 @@ export const postCalibration = async (data: {
   boardImg: string;
 }): Promise<any> => {
   try {
-    const res: AxiosResponse = await instance.post("/board/calibrate", data);
-    return res.data;
+    await instance.post("/board/calibrate", data);
   } catch (err) {
     errorHandler(err);
   }
