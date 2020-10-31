@@ -9,6 +9,7 @@ import { errorHandler } from "./error/error.handler";
 import { SocketService } from "./services/socket.service";
 import { CacheService } from "./services/nodecache.service";
 import { socketController } from "./socket/socket.routes";
+import boardRoutes from "./board/board.routes";
 
 dotenvConfig();
 
@@ -16,6 +17,8 @@ const app: Express = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use("/api/v1", boardRoutes);
 
 app.use(errorHandler);
 if (process.env.NODE_ENV === "production") {
