@@ -119,18 +119,22 @@ const Student = () => {
 
   return (
     <div className="stdContainer text-center min-h-screen">
-      <h1 className="text-4xl w-full mt-10">Good Morning, student!</h1>
+      <h1 className="text-sm sm:text-2xl md:text-3xl lg:text-4xl w-full mt-1 md:mt-10">
+        Good Morning, student!
+      </h1>
       <div className="w-full">
         {stream && (
           <>
-            {!callAccepted && (
+            {callAccepted && (
               <>
-                <canvas
-                  ref={canvasRef}
-                  width={1280}
-                  height={720}
-                  className="border-solid border-2 border-black bg-white mx-auto"
-                />
+                <div className="w-11/12 mx-auto overflow-scroll">
+                  <canvas
+                    ref={canvasRef}
+                    width={1280}
+                    height={720}
+                    className="border-solid border-2 border-black bg-white mx-auto"
+                  />
+                </div>
                 <video
                   className="hidden"
                   playsInline
@@ -154,7 +158,7 @@ const Student = () => {
       </div>
 
       <div className="mx-auto">
-        {callAccepted && (
+        {!callAccepted && (
           <form onSubmit={joinRoomHandler}>
             <input
               type="text"
