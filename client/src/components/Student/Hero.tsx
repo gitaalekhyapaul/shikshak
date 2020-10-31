@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, FormEvent } from "react";
 import Peer from "simple-peer";
 import io from "socket.io-client";
 
 const Student = () => {
   const [yourID, setYourID] = useState<string>("");
-  const [isMute, setIsMute] = useState<boolean>(false);
   const [stream, setStream] = useState<MediaStream>();
   const [roomCode, setRoomCode] = useState<string>("");
   const [receivingCall, setReceivingCall] = useState<boolean>(false);
@@ -33,16 +32,21 @@ const Student = () => {
       });
   }, []);
 
-  // useEffect(() => {
-  //   var ctx = canvasRef.current?.getContext("2d");
-  //   var imgData = ctx?.createImageData(3, 3);
-  //   for (var i = 0; i < imgData!.data.length; i += 4) {
-  //     imgData!.data[i + 0] = 0;
-  //     imgData!.data[i + 1] = 0;
-  //     imgData!.data[i + 2] = 0;
-  //     imgData!.data[i + 3] = 255;
-  //   }
-  // }, []);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    var imgData = ctx?.createImageData(3, 3);
+    if (imgData) {
+      for (var i = 0; i < imgData.data.length; i += 4) {
+        imgData.data[i + 0] = 0;
+        imgData.data[i + 1] = 0;
+        imgData.data[i + 2] = 0;
+        imgData.data[i + 3] = 255;
+      }
+      //@ts-ignore
+      points.map((point) => ctx.putImageData(imgData, point[0], point[1]));
+    }
+  });
 
   const points = [
     [10, 10],
@@ -53,7 +57,9 @@ const Student = () => {
     [200, 500],
   ];
 
-  const joinRoomHandler = (_roomCode: string) => {
+  const joinRoomHandler = (e: FormEvent) => {
+    e.preventDefault();
+    let _roomCode = joinRoomInput.current!.value;
     console.log("student joins room:", _roomCode);
     setRoomCode(_roomCode);
     socket.current.emit(
@@ -111,41 +117,34 @@ const Student = () => {
     peer.signal(teacherSignal);
   };
 
-  const toggleIsMuteHandler = () => {
-    setIsMute(!isMute);
-  };
-
   return (
-    <div className="stdContainer text-center bg-gray-300 min-h-screen">
+    <div className="stdContainer text-center min-h-screen">
       <h1 className="text-4xl w-full mt-10">Good Morning, student!</h1>
       <div className="w-full">
         {stream && (
           <>
-            {callAccepted && (
+            {!callAccepted && (
               <>
                 <canvas
                   ref={canvasRef}
                   width={1280}
                   height={720}
-                  className="border-solid border-2 border-black bg-white w-2/3 mx-auto"
+                  className="border-solid border-2 border-black bg-white mx-auto"
                 />
                 <video
                   className="hidden"
                   playsInline
-                  muted={isMute}
+                  muted={false}
                   ref={partnerVideo}
                   autoPlay
                 />
-                <button onClick={toggleIsMuteHandler}>
-                  {isMute ? "unmute" : "mute"}
-                </button>
               </>
             )}
             {stream && (
               <video
                 className="hidden"
                 playsInline
-                muted
+                muted={true}
                 ref={userVideo}
                 autoPlay
               />
@@ -154,22 +153,35 @@ const Student = () => {
         )}
       </div>
 
-      <div>
-        {receivingCall && (
-          <>
-            <div>Receiving call-offer from the teacher</div>
-            <button onClick={acceptCallHandler}>Join Room</button>
-          </>
+      <div className="mx-auto">
+        {callAccepted && (
+          <form onSubmit={joinRoomHandler}>
+            <input
+              type="text"
+              ref={joinRoomInput}
+              className="stdBorder pl-4 py-3"
+              name="room-code"
+              placeholder="Room Code"
+            />
+            {receivingCall ? (
+              <>
+                <button
+                  onClick={acceptCallHandler}
+                  className="stdButton"
+                  type="button"
+                >
+                  Join Room
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="submit" className="stdButton">
+                  Find Room
+                </button>
+              </>
+            )}
+          </form>
         )}
-        <input
-          type="text"
-          ref={joinRoomInput}
-          className="stdBorder"
-          name="room-code"
-        />
-        <button onClick={() => joinRoomHandler(joinRoomInput.current!.value)}>
-          Find Room
-        </button>
       </div>
     </div>
   );
