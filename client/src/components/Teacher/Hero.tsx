@@ -8,16 +8,14 @@ const Teacher = () => {
   const [isMute, setIsMute] = useState<boolean>(false);
   const [stream, setStream] = useState<MediaStream>();
   const [roomCode, setRoomCode] = useState<string>("");
-  // eslint-disable-next-line
-  const [ownSignal, setOwnSignal] = useState<any>({});
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
-
   const [imgSrc, setImgSrc] = React.useState<string>("");
 
   const socket = useRef<any>();
   const partnerVideo = useRef<any>();
-
   const webcamRef = useRef<any>(null);
+
+  let ownSignal: any;
 
   useEffect(() => {
     socket.current = io.connect();
@@ -26,7 +24,7 @@ const Teacher = () => {
     });
     console.log("socket connected with object:", socket.current);
     navigator.mediaDevices
-      .getUserMedia({ video: false, audio: true })
+      .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         setStream(stream);
       });
@@ -74,22 +72,14 @@ const Teacher = () => {
       stream,
     });
     peer.on("signal", (data) => {
-      setOwnSignal(data);
+      ownSignal = data;
     });
     socket.current.on("fetch-teacher", () => {
       console.log("student has fetched teacher");
-      setOwnSignal((prevOwnSignal: any) => {
-        console.log(
-          "sent offer SDP to room:",
-          _roomId,
-          ", offer:",
-          prevOwnSignal
-        );
-        socket.current.emit("offer", {
-          roomCode: _roomId,
-          signalData: prevOwnSignal,
-        });
-        return prevOwnSignal;
+      console.log("sent offer SDP to room:", _roomId, ", offer:", ownSignal);
+      socket.current.emit("offer", {
+        roomCode: _roomId,
+        signalData: ownSignal,
       });
     });
 
@@ -117,54 +107,77 @@ const Teacher = () => {
       imageData.substring(0, 100),
       "..."
     );
+    setImgSrc("");
+  };
+
+  const videoConstraints = {
+    width: 1280,
+    height: 720,
   };
 
   return (
-    <>
-      <h1>THIS IS TEACHER</h1>
-      <div>
-        <div>
-          {stream && (
-            <>
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                className="stdBorder"
-              />
-              <button onClick={capture}>Capture photo</button>
-              {imgSrc && (
-                <>
-                  <img src={imgSrc} />
-                  <button onClick={() => postImage(imgSrc)}>
-                    send picture
-                  </button>
-                </>
-              )}
-            </>
-          )}
-        </div>
-        <div>
-          {callAccepted && (
-            <>
-              <video
-                className="stdBorder"
-                playsInline
-                muted={isMute}
-                ref={partnerVideo}
-                autoPlay
-              />
-              <button onClick={toggleIsMuteHandler}>
-                {isMute ? "unmute" : "mute"}
-              </button>
-            </>
-          )}
-        </div>
+    <div className="stdContainer text-center bg-gray-300 min-h-screen">
+      <h1 className="text-4xl w-full mt-10">Good Morning, शिक्षक!</h1>
+      <div className="w-full">
+        {stream && (
+          <>
+            {!imgSrc ? (
+              <>
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  className="stdBorder mx-auto w-3/5"
+                  videoConstraints={videoConstraints}
+                  screenshotQuality={1}
+                />
+                <button onClick={capture} className="stdButton">
+                  Capture View
+                </button>
+              </>
+            ) : (
+              <>
+                <img src={imgSrc} className="mx-auto w-3/5" />
+                <button onClick={() => postImage(imgSrc)} className="stdButton">
+                  Send Preview
+                </button>
+                <button onClick={() => setImgSrc("")} className="stdButton">
+                  Take again
+                </button>
+              </>
+            )}
+            <button
+              onClick={createRoomHandler}
+              className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
+            >
+              Create Room
+            </button>
+            {roomCode && (
+              <h3 className="text-lg">
+                Your Room Code is :{" "}
+                <span className="font-bold text-xl">{roomCode}</span>
+              </h3>
+            )}
+          </>
+        )}
       </div>
       <div>
-        <button onClick={createRoomHandler}>Create Room</button>
+        {callAccepted && (
+          <>
+            <video
+              className="stdBorder"
+              playsInline
+              muted={isMute}
+              ref={partnerVideo}
+              autoPlay
+            />
+            <button onClick={toggleIsMuteHandler}>
+              {isMute ? "unmute" : "mute"}
+            </button>
+          </>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
