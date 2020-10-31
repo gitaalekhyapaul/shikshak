@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/gitaalekhyapaul/shikshak#readme",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.8",
     "@types/dotenv": "^8.2.0",
@@ -38,6 +39,7 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "data-uri-to-buffer": "^3.0.1",

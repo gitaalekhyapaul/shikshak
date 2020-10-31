@@ -1,5 +1,5 @@
 import socketIO from "socket.io";
-import nanoID, { nanoid } from "nanoid";
+import nanoID from "nanoid";
 import { CacheService } from "../services/nodecache.service";
 
 export const socketController = (socket: socketIO.Socket) => {
@@ -63,7 +63,13 @@ export const socketController = (socket: socketIO.Socket) => {
       signalData: data.signalData,
     });
   });
+  socket.on("close-room", (data) => {
+    console.log(`socket::close-room - room: '${data.roomCode}' is closed.`);
+    CacheService.getInstance().getCache().del(data.roomCode);
+    socket.disconnect(true);
+  });
   socket.on("disconnect", () => {
     console.log("socket::disconnect - ", socket.id, "has disconnected.");
+    socket.disconnect(true);
   });
 };
