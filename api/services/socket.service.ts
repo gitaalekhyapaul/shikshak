@@ -1,6 +1,5 @@
 import { Server } from "http";
 import socketIO from "socket.io";
-import { isObject } from "util";
 import { errors } from "../error/error.constant";
 
 export class SocketService {
