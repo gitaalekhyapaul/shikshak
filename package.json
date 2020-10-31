@@ -1,21 +1,21 @@
 {
-  "name": "aaruush-org",
+  "name": "shikshak",
   "version": "1.0.0",
-  "description": "Official Website of A'20",
-  "main": "app.js",
+  "description": "Shikshak 1.0 by Team !!Coders",
+  "main": "./build/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jagnani73/react-typescript-tailwind.git"
+    "url": "git+https://github.com/gitaalekhyapaul/shikshak.git"
   },
-  "author": "jagnani73",
+  "author": "Team !!Coders",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jagnani73/react-typescript-tailwind/issues"
+    "url": "https://github.com/gitaalekhyapaul/shikshak/issues"
   },
-  "homepage": "https://github.com/jagnani73/react-typescript-tailwind#readme",
+  "homepage": "https://github.com/gitaalekhyapaul/shikshak#readme",
   "devDependencies": {
     "typescript": "^4.0.2"
   }
