@@ -116,11 +116,6 @@ const Teacher = () => {
     setImgSrc("");
   };
 
-  const videoConstraints = {
-    width: 1280,
-    height: 720,
-  };
-
   return (
     <div className="stdContainer text-center min-h-screen">
       <h1 className="text-4xl w-full mt-10">Good Morning, शिक्षक!</h1>
@@ -134,14 +129,16 @@ const Teacher = () => {
                   ref={webcamRef}
                   muted={true}
                   screenshotFormat="image/jpeg"
-                  className="stdBorder mx-auto w-2/5"
-                  videoConstraints={videoConstraints}
+                  className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5"
                   screenshotQuality={1}
                 />
               </>
             ) : (
               <>
-                <img src={imgSrc} className="mx-auto w-2/5" />
+                <img
+                  src={imgSrc}
+                  className="mx-auto w-11/12 md:3/4 lg:w-2/5 border-solid border-2 border-black"
+                />
                 <button onClick={() => postImage(imgSrc)} className="stdButton">
                   Send Preview
                 </button>
