@@ -7,6 +7,7 @@ import { Server } from "http";
 
 import { errorHandler } from "./error/error.handler";
 import { SocketService } from "./services/socket.service";
+import { CacheService } from "./services/nodecache.service";
 import { socketController } from "./socket/socket.routes";
 
 dotenvConfig();
@@ -40,17 +41,17 @@ const server: Server = app.listen(process.env.PORT, () => {
   );
 });
 
-Promise.all([SocketService.getInstance().initalize(server)])
+Promise.all([
+  SocketService.getInstance().initalize(server),
+  CacheService.getInstance().initalize(),
+])
   .then(() => {
-    console.log(`Express and Socket.IO successfully set up.`);
+    console.log(`Listening For Requests...`);
     SocketService.getInstance()
       .getIO()
       .on("connection", (socket) => {
-        console.log(socket.id, "has connected.");
+        console.log("socket::connection -", socket.id, "has connected.");
         socket.emit("your-id", socket.id);
-        socket.on("disconnect", () => {
-          console.log(socket.id, "has disconnected.");
-        });
         socketController(socket);
       });
   })
