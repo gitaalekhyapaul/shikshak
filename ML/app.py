@@ -10,7 +10,7 @@ app = Flask(__name__)
 #      content = db.column(db.json, nullabe = False)
 
 
-@app.route('/app/findPoints', methoda = ['POST'])
+@app.route('/app/findPoints', methods = ['POST'])
 def index1():
 
     if request.is_json:
