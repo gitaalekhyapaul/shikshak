@@ -11,7 +11,7 @@ const Teacher = () => {
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
   const [isTeacherReady, setIsTeacherReady] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [imgSrc, setImgSrc] = React.useState<string>("");
+  const [imgSrc, setImgSrc] = useState<string>("");
 
   const socket = useRef<any>();
   const partnerVideo = useRef<any>();
@@ -123,7 +123,7 @@ const Teacher = () => {
   };
 
   return (
-    <div className="stdContainer text-center bg-gray-300 min-h-screen">
+    <div className="stdContainer text-center min-h-screen">
       <h1 className="text-4xl w-full mt-10">Good Morning, शिक्षक!</h1>
       <div className="w-full">
         {stream && (
@@ -133,18 +133,16 @@ const Teacher = () => {
                 <Webcam
                   audio={false}
                   ref={webcamRef}
+                  muted={isMute}
                   screenshotFormat="image/jpeg"
-                  className="stdBorder mx-auto w-3/5"
+                  className="stdBorder mx-auto w-2/5"
                   videoConstraints={videoConstraints}
                   screenshotQuality={1}
                 />
-                <button onClick={capture} className="stdButton">
-                  Capture View
-                </button>
               </>
             ) : (
               <>
-                <img src={imgSrc} className="mx-auto w-3/5" />
+                <img src={imgSrc} className="mx-auto w-2/5" />
                 <button onClick={() => postImage(imgSrc)} className="stdButton">
                   Send Preview
                 </button>
@@ -153,33 +151,41 @@ const Teacher = () => {
                 </button>
               </>
             )}
-            <button
-              onClick={createRoomHandler}
-              className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
-            >
-              {!isLoading ? "Create Room" : "Loading"}
-            </button>
-            {isTeacherReady && roomCode && (
-              <h3 className="text-lg">
-                Your Room Code is :{" "}
-                <span className="font-bold text-xl">{roomCode}</span>
-              </h3>
+
+            {isTeacherReady && roomCode ? (
+              <>
+                {!imgSrc && (
+                  <button onClick={capture} className="stdButton">
+                    Capture View
+                  </button>
+                )}
+                <h3 className="text-lg">
+                  Your Room Code is :{" "}
+                  <span className="font-bold text-xl">{roomCode}</span>
+                </h3>
+              </>
+            ) : (
+              <button
+                onClick={createRoomHandler}
+                className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
+              >
+                {!isLoading ? "Create Room" : "Loading"}
+              </button>
             )}
           </>
         )}
       </div>
-      <div>
+      <div className="w-full">
         {callAccepted && (
           <>
-            <video
-              className="stdBorder"
-              playsInline
-              muted={isMute}
-              ref={partnerVideo}
-              autoPlay
-            />
-            <button onClick={toggleIsMuteHandler}>
-              {isMute ? "unmute" : "mute"}
+            <video className="hidden" playsInline ref={partnerVideo} autoPlay />
+            <button
+              onClick={toggleIsMuteHandler}
+              className={`rounded-md py-3 px-4 my-5 outline-none text-white focus:outline-none mx-auto ${
+                isMute ? " bg-green-400" : " bg-red-400"
+              }`}
+            >
+              {isMute ? "Unmute Student(s)" : "Mute Student(s)"}
             </button>
           </>
         )}
