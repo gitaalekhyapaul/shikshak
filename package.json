@@ -8,7 +8,8 @@
     "start": "node ./build/app.js",
     "start:dev": "npx nodemon ./build/app.js",
     "start:client": "cd client && yarn start",
-    "build": "npx tsc",
+    "build": "yarn build:client && yarn build:server",
+    "build:server": "npx tsc",
     "build:dev": "npx tsc --watch",
     "build:client": "cd client && yarn build",
     "postinstall": "cd client && yarn"
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/gitaalekhyapaul/shikshak#readme",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.8",
     "@types/dotenv": "^8.2.0",
@@ -32,17 +34,22 @@
     "@types/node": "^14.14.6",
     "@types/node-cache": "^4.2.5",
     "@types/socket.io": "^2.1.11",
+    "@types/yup": "^0.29.9",
     "nodemon": "^2.0.6",
     "tsc": "^1.20150623.0",
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "data-uri-to-buffer": "^3.0.1",
+    "datauri": "^3.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "nanoid": "^3.1.16",
     "node-cache": "^5.1.2",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "yup": "^0.29.3"
   }
 }

@@ -3,13 +3,17 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
 import * as serviceWorker from "./serviceWorker";
+import Navbar from "./components/Shared/Navbar";
 import App from "./App";
+import Footer from "./components/Shared/Footer";
 import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
+      <Navbar />
       <App />
+      <Footer />
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
