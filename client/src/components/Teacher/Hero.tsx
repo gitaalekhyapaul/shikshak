@@ -3,6 +3,8 @@ import Peer from "simple-peer";
 import io from "socket.io-client";
 import Webcam from "react-webcam";
 
+import { postCalibration } from "../../services/axios";
+
 const Teacher = () => {
   const [yourID, setYourID] = useState<string>("");
   const [stream, setStream] = useState<MediaStream>();
@@ -108,17 +110,10 @@ const Teacher = () => {
   };
 
   const postImage = (imageData: string) => {
-    console.log(
-      "base64 data uri of image to be sent",
-      imageData.substring(0, 100),
-      "..."
-    );
-    setImgSrc("");
-  };
-
-  const videoConstraints = {
-    width: 1280,
-    height: 720,
+    console.log("base64 data uri of image to be sent", imageData, "...");
+    postCalibration({ roomId: roomCode, boardImg: imageData }).then(() => {
+      setImgSrc("");
+    });
   };
 
   return (
@@ -134,14 +129,16 @@ const Teacher = () => {
                   ref={webcamRef}
                   muted={true}
                   screenshotFormat="image/jpeg"
-                  className="stdBorder mx-auto w-2/5"
-                  videoConstraints={videoConstraints}
+                  className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5"
                   screenshotQuality={1}
                 />
               </>
             ) : (
               <>
-                <img src={imgSrc} className="mx-auto w-2/5" />
+                <img
+                  src={imgSrc}
+                  className="mx-auto w-11/12 md:3/4 lg:w-2/5 border-solid border-2 border-black"
+                />
                 <button onClick={() => postImage(imgSrc)} className="stdButton">
                   Send Preview
                 </button>
