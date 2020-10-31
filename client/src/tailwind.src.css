@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.stdBorder {
+  @apply border-solid border-black rounded-lg border-2;
+}
