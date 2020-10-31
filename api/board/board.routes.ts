@@ -1,7 +1,9 @@
 import { Router, Request, Response, NextFunction } from "express";
+import { promises as fs } from "fs";
+
 import validateQuery from "../middlewares/validate-query";
 import { PostRequestSchema, postRequest } from "./board.schema";
-import { genImageAndStore } from "./board.service";
+import { genImageAndStore, genImageDataURI } from "./board.service";
 
 const router: Router = Router();
 
@@ -12,9 +14,14 @@ const handlePostCalibrate = async (
 ) => {
   try {
     const { boardImg, roomId } = req.body as postRequest;
-    await genImageAndStore(boardImg, roomId);
+    const fileKey = await genImageAndStore(boardImg, roomId);
+    //FIXME Handle Axios to Flask
+    const responseDataURI = await genImageDataURI(fileKey);
     res.json({
-      success: true,
+      imgUri: responseDataURI,
+    });
+    Promise.all([fs.unlink(fileKey)]).catch((err) => {
+      console.log(`FileDeleteError for file '${fileKey}'`);
     });
   } catch (err) {
     next(err);
@@ -28,6 +35,10 @@ const handlePostEmit = async (
 ) => {
   try {
     const { boardImg, roomId } = req.body as postRequest;
+    const fileKey = await genImageAndStore(boardImg, roomId);
+    res.json({
+      success: true,
+    });
   } catch (err) {
     next(err);
   }
