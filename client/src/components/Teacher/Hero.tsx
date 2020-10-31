@@ -181,10 +181,11 @@ const Teacher = () => {
                   screenshotFormat="image/jpeg"
                   className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5 shadow-2xl"
                   screenshotQuality={1}
+                  mirrored={true}
                 />
                 {isTeacherReady && !isApproved && (
                   <button onClick={capture} className="stdButton">
-                    Capture Board
+                    Calibrate Board
                   </button>
                 )}
               </>
@@ -228,7 +229,7 @@ const Teacher = () => {
               <>
                 {isApproved && (
                   <button className="stdButton" onClick={sendBoard}>
-                    Send Board
+                    Capture Board
                   </button>
                 )}
                 <h3 className="text-lg">
