@@ -1,28 +1,41 @@
 import React from "react";
+import { Switch, Route, Link } from "react-router-dom";
 
-import logo from "./logo.svg";
+import Teacher from "./components/Teacher/Hero";
+import Student from "./components/Student/Hero";
+
 import "./App.css";
 import "./tailwind.css";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="text-3xl text-blue-400">
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Switch>
+      <Route path="/teacher" exact component={Teacher} />
+      <Route path="/student" exact component={Student} />
+      <Route path="/" exact>
+        <div className="stdContainer h-screen bg-blue-300">
+          <div className="m-auto">
+            <h3 className="text-center text-3xl">Are you a</h3>
+            <h4 className="text-4xl">
+              <Link
+                to="/student"
+                className="text-5xl font-bold hover:text-gray-700"
+              >
+                Student
+              </Link>{" "}
+              or{" "}
+              <Link
+                to="/teacher"
+                className="text-5xl font-bold hover:text-gray-700"
+              >
+                Teacher
+              </Link>
+            </h4>
+          </div>
+        </div>
+      </Route>
+    </Switch>
   );
-}
+};
 
 export default App;

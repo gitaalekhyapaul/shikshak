@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.stdBorder {
+  @apply border-solid border-black rounded-lg border-2;
+}
+
+.stdContainer {
+  @apply flex flex-wrap w-full;
+}
+
+.stdButton {
+  @apply bg-green-400 rounded-md py-3 px-4 my-5 outline-none mx-4 text-white;
+}
+
+.stdButton:focus {
+  @apply outline-none;
+}
