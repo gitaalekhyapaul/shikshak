@@ -43,17 +43,25 @@ const Student = () => {
     );
   };
 
-  const callOfferhandler = (_roomCode: string) => {
-    console.log("student has joined-room");
-    socket.current.emit("joined-room", {
-      roomCode: _roomCode,
-    });
+  const callOfferhandler = (data: {
+    success: boolean;
+    _roomCode: string;
+    error?: string;
+  }) => {
+    if (data.success) {
+      console.log("student has joined-room");
+      socket.current.emit("joined-room", {
+        roomCode: data._roomCode,
+      });
 
-    socket.current.on("call-offer", (data: any) => {
-      console.log("student receives teacher offer", data.signalData);
-      setReceivingCall(true);
-      setTeacherSignal(data.signalData);
-    });
+      socket.current.on("call-offer", (data: any) => {
+        console.log("student receives teacher offer", data.signalData);
+        setReceivingCall(true);
+        setTeacherSignal(data.signalData);
+      });
+    } else {
+      console.log(data.error);
+    }
   };
 
   const acceptCallHandler = () => {
