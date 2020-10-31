@@ -166,7 +166,13 @@ const Teacher = () => {
             {!imgSrc ? (
               <>
                 {showCountdown && (
-                  <p className="text-2xl">Capturing in: {countdown}</p>
+                  <>
+                    <p className="text-2xl">
+                      Capturing in:{" "}
+                      <span className="font-bold">{countdown}</span>
+                    </p>
+                    <p className="text-2xl pb-2">Please move away</p>
+                  </>
                 )}
                 <Webcam
                   audio={false}
