@@ -1,17 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Peer from "simple-peer";
 import io from "socket.io-client";
+import Webcam from "react-webcam";
 
 const Teacher = () => {
   const [yourID, setYourID] = useState<string>("");
+  const [isMute, setIsMute] = useState<boolean>(false);
   const [stream, setStream] = useState<MediaStream>();
   const [roomCode, setRoomCode] = useState<string>("");
-  const [ownSignal, setOwnSignal] = useState<any>({});
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
+  const [imgSrc, setImgSrc] = React.useState<string>("");
 
   const socket = useRef<any>();
-  const userVideo = useRef<any>();
   const partnerVideo = useRef<any>();
+  const webcamRef = useRef<any>(null);
+
+  let ownSignal: any;
 
   useEffect(() => {
     socket.current = io.connect();
@@ -20,19 +24,16 @@ const Teacher = () => {
     });
     console.log("socket connected with object:", socket.current);
     navigator.mediaDevices
-      .getUserMedia({ video: false, audio: true })
+      .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         setStream(stream);
       });
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
-      .then((stream) => {
-        if (userVideo.current) {
-          userVideo.current.srcObject = stream;
-        }
-      });
   }, []);
+
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImgSrc(imageSrc);
+  }, [webcamRef, setImgSrc]);
 
   const createRoomHandler = () => {
     socket.current.emit(
@@ -57,36 +58,28 @@ const Teacher = () => {
       config: {
         iceServers: [
           {
-            urls: "stun:numb.viagenie.ca",
-            username: "sultan1640@gmail.com",
-            credential: "98376683",
+            urls: process.env.REACT_APP_STUN_URLS,
+            username: process.env.REACT_APP_STUN_USERNAME,
+            credential: process.env.REACT_APP_STUN_CREDENTIALS,
           },
           {
-            urls: "turn:numb.viagenie.ca",
-            username: "sultan1640@gmail.com",
-            credential: "98376683",
+            urls: process.env.REACT_APP_TURN_URLS,
+            username: process.env.REACT_APP_TURN_USERNAME,
+            credential: process.env.REACT_APP_TURN_CREDENTIALS,
           },
         ],
       },
       stream,
     });
     peer.on("signal", (data) => {
-      setOwnSignal(data);
+      ownSignal = data;
     });
     socket.current.on("fetch-teacher", () => {
       console.log("student has fetched teacher");
-      setOwnSignal((prevOwnSignal: any) => {
-        console.log(
-          "sent offer SDP to room:",
-          _roomId,
-          ", offer:",
-          prevOwnSignal
-        );
-        socket.current.emit("offer", {
-          roomCode: _roomId,
-          signalData: prevOwnSignal,
-        });
-        return prevOwnSignal;
+      console.log("sent offer SDP to room:", _roomId, ", offer:", ownSignal);
+      socket.current.emit("offer", {
+        roomCode: _roomId,
+        signalData: ownSignal,
       });
     });
 
@@ -104,36 +97,87 @@ const Teacher = () => {
     });
   };
 
+  const toggleIsMuteHandler = () => {
+    setIsMute(!isMute);
+  };
+
+  const postImage = (imageData: string) => {
+    console.log(
+      "base64 data uri of image to be sent",
+      imageData.substring(0, 100),
+      "..."
+    );
+    setImgSrc("");
+  };
+
+  const videoConstraints = {
+    width: 1280,
+    height: 720,
+  };
+
   return (
-    <>
-      <h1>THIS IS TEACHER</h1>
+    <div className="stdContainer text-center bg-gray-300 min-h-screen">
+      <h1 className="text-4xl w-full mt-10">Good Morning, शिक्षक!</h1>
+      <div className="w-full">
+        {stream && (
+          <>
+            {!imgSrc ? (
+              <>
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  className="stdBorder mx-auto w-3/5"
+                  videoConstraints={videoConstraints}
+                  screenshotQuality={1}
+                />
+                <button onClick={capture} className="stdButton">
+                  Capture View
+                </button>
+              </>
+            ) : (
+              <>
+                <img src={imgSrc} className="mx-auto w-3/5" />
+                <button onClick={() => postImage(imgSrc)} className="stdButton">
+                  Send Preview
+                </button>
+                <button onClick={() => setImgSrc("")} className="stdButton">
+                  Take again
+                </button>
+              </>
+            )}
+            <button
+              onClick={createRoomHandler}
+              className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
+            >
+              Create Room
+            </button>
+            {roomCode && (
+              <h3 className="text-lg">
+                Your Room Code is :{" "}
+                <span className="font-bold text-xl">{roomCode}</span>
+              </h3>
+            )}
+          </>
+        )}
+      </div>
       <div>
-        <div>
-          {stream && (
+        {callAccepted && (
+          <>
             <video
               className="stdBorder"
               playsInline
-              muted
-              ref={userVideo}
-              autoPlay
-            />
-          )}
-        </div>
-        <div>
-          {callAccepted && (
-            <video
-              className="stdBorder"
-              playsInline
+              muted={isMute}
               ref={partnerVideo}
               autoPlay
             />
-          )}
-        </div>
+            <button onClick={toggleIsMuteHandler}>
+              {isMute ? "unmute" : "mute"}
+            </button>
+          </>
+        )}
       </div>
-      <div>
-        <button onClick={createRoomHandler}>Create Room</button>
-      </div>
-    </>
+    </div>
   );
 };
 

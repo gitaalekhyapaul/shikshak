@@ -4,6 +4,7 @@ import io from "socket.io-client";
 
 const Student = () => {
   const [yourID, setYourID] = useState<string>("");
+  const [isMute, setIsMute] = useState<boolean>(false);
   const [stream, setStream] = useState<MediaStream>();
   const [roomCode, setRoomCode] = useState<string>("");
   const [receivingCall, setReceivingCall] = useState<boolean>(false);
@@ -14,6 +15,7 @@ const Student = () => {
   const partnerVideo = useRef<HTMLVideoElement | null>(null);
   const socket = useRef<any>();
   const joinRoomInput = useRef<HTMLInputElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     socket.current = io.connect();
@@ -30,6 +32,26 @@ const Student = () => {
         }
       });
   }, []);
+
+  // useEffect(() => {
+  //   var ctx = canvasRef.current?.getContext("2d");
+  //   var imgData = ctx?.createImageData(3, 3);
+  //   for (var i = 0; i < imgData!.data.length; i += 4) {
+  //     imgData!.data[i + 0] = 0;
+  //     imgData!.data[i + 1] = 0;
+  //     imgData!.data[i + 2] = 0;
+  //     imgData!.data[i + 3] = 255;
+  //   }
+  // }, []);
+
+  const points = [
+    [10, 10],
+    [10, 16],
+    [100, 100],
+    [200, 200],
+    [200, 300],
+    [200, 500],
+  ];
 
   const joinRoomHandler = (_roomCode: string) => {
     console.log("student joins room:", _roomCode);
@@ -89,45 +111,67 @@ const Student = () => {
     peer.signal(teacherSignal);
   };
 
+  const toggleIsMuteHandler = () => {
+    setIsMute(!isMute);
+  };
+
   return (
-    <>
-      <h1>THIS IS STUDENT</h1>
-      <div>
-        <div>
-          {stream && (
-            <video
-              className="stdBorder"
-              playsInline
-              muted
-              ref={userVideo}
-              autoPlay
-            />
-          )}
-        </div>
-        <div>
-          {callAccepted && (
-            <video
-              className="stdBorder"
-              playsInline
-              ref={partnerVideo}
-              autoPlay
-            />
-          )}
-        </div>
+    <div className="stdContainer text-center bg-gray-300 min-h-screen">
+      <h1 className="text-4xl w-full mt-10">Good Morning, student!</h1>
+      <div className="w-full">
+        {stream && (
+          <>
+            {callAccepted && (
+              <>
+                <canvas
+                  ref={canvasRef}
+                  width={1280}
+                  height={720}
+                  className="border-solid border-2 border-black bg-white w-2/3 mx-auto"
+                />
+                <video
+                  className="hidden"
+                  playsInline
+                  muted={isMute}
+                  ref={partnerVideo}
+                  autoPlay
+                />
+                <button onClick={toggleIsMuteHandler}>
+                  {isMute ? "unmute" : "mute"}
+                </button>
+              </>
+            )}
+            {stream && (
+              <video
+                className="hidden"
+                playsInline
+                muted
+                ref={userVideo}
+                autoPlay
+              />
+            )}
+          </>
+        )}
       </div>
+
       <div>
         {receivingCall && (
           <>
             <div>Receiving call-offer from the teacher</div>
-            <button onClick={acceptCallHandler}>accept call</button>
+            <button onClick={acceptCallHandler}>Join Room</button>
           </>
         )}
-        <input type="text" ref={joinRoomInput} className="stdBorder" />
+        <input
+          type="text"
+          ref={joinRoomInput}
+          className="stdBorder"
+          name="room-code"
+        />
         <button onClick={() => joinRoomHandler(joinRoomInput.current!.value)}>
-          join room
+          Find Room
         </button>
       </div>
-    </>
+    </div>
   );
 };
 
