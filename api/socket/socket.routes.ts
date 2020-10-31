@@ -11,7 +11,9 @@ export const socketController = (socket: socketIO.Socket) => {
     )();
     socket.join(roomCode);
     console.log(
-      `socket::create-room -", data.id, "created room: '${roomCode}'`
+      "socket::create-room -",
+      data.id,
+      `created room: '${roomCode}'`
     );
     CacheService.getInstance().getCache().set(roomCode, true);
     callback(roomCode);
