@@ -70,16 +70,23 @@ const Teacher = () => {
       },
       stream,
     });
-
+    peer.on("signal", (data) => {
+      setOwnSignal(data);
+    });
     socket.current.on("fetch-teacher", () => {
       console.log("student has fetched teacher");
-      peer.on("signal", (data) => {
-        console.log("sent offer SDP to room:", _roomId, ", offer:", data);
-        setOwnSignal(data);
+      setOwnSignal((prevOwnSignal: any) => {
+        console.log(
+          "sent offer SDP to room:",
+          _roomId,
+          ", offer:",
+          prevOwnSignal
+        );
         socket.current.emit("offer", {
           roomCode: _roomId,
-          signalData: data,
+          signalData: prevOwnSignal,
         });
+        return prevOwnSignal;
       });
     });
 
