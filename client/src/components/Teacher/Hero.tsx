@@ -140,22 +140,33 @@ const Teacher = () => {
   };
 
   const sendBoard = () => {
-    boardSrc = webcamRef.current.getScreenshot();
-    postBoard({ roomId: roomCode, boardImg: boardSrc }).then((res) => {
-      console.log(res);
-    });
+    setShowCountdown(true);
+    setCountdown(5);
+    setTimeout(() => {
+      boardSrc = webcamRef.current.getScreenshot();
+      clearInterval(countdownInterval);
+      setShowCountdown(false);
+      postBoard({ roomId: roomCode, boardImg: boardSrc }).then((res) => {
+        console.log(res);
+      });
+    }, 5000);
+    const countdownInterval = setInterval(() => {
+      setCountdown((prevCount) => prevCount - 1);
+    }, 1000);
   };
 
   return (
     <div className="stdContainer text-center min-h-screen">
-      <h1 className="text-4xl w-full mt-10 h-auto">Namaste, शिक्षक!</h1>
+      <h1 className="text-4xl w-full mt-10 h-auto">
+        Namaste, <span className="font-bold">शिक्षक</span>!
+      </h1>
       <div className="w-full">
         {stream && (
           <>
             {!imgSrc ? (
               <>
                 {showCountdown && (
-                  <p className="text-2xl">Clicking in: {countdown}</p>
+                  <p className="text-2xl">Capturing in: {countdown}</p>
                 )}
                 <Webcam
                   audio={false}
