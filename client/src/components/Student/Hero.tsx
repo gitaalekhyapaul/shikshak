@@ -4,6 +4,7 @@ import io from "socket.io-client";
 
 const Student = () => {
   const [yourID, setYourID] = useState<string>("");
+  const [isMute, setIsMute] = useState<boolean>(false);
   const [stream, setStream] = useState<MediaStream>();
   const [roomCode, setRoomCode] = useState<string>("");
   const [receivingCall, setReceivingCall] = useState<boolean>(false);
@@ -81,6 +82,10 @@ const Student = () => {
     peer.signal(teacherSignal);
   };
 
+  const toggleIsMuteHandler = () => {
+    setIsMute(!isMute);
+  };
+
   return (
     <>
       <h1>THIS IS STUDENT</h1>
@@ -98,12 +103,18 @@ const Student = () => {
         </div>
         <div>
           {callAccepted && (
-            <video
-              className="stdBorder"
-              playsInline
-              ref={partnerVideo}
-              autoPlay
-            />
+            <>
+              <video
+                className="stdBorder"
+                playsInline
+                muted={isMute}
+                ref={partnerVideo}
+                autoPlay
+              />
+              <button onClick={toggleIsMuteHandler}>
+                {isMute ? "unmute" : "mute"}
+              </button>
+            </>
           )}
         </div>
       </div>
