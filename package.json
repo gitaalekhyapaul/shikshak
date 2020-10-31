@@ -8,7 +8,8 @@
     "start": "node ./build/app.js",
     "start:dev": "npx nodemon ./build/app.js",
     "start:client": "cd client && yarn start",
-    "build": "npx tsc",
+    "build": "yarn build:client && build:server",
+    "build:server": "npx tsc",
     "build:dev": "npx tsc --watch",
     "build:client": "cd client && yarn build",
     "postinstall": "cd client && yarn"
