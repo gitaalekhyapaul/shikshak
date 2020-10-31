@@ -114,37 +114,50 @@ const Student = () => {
         partnerVideo.current.srcObject = _stream;
       }
     });
+
     peer.signal(teacherSignal);
+
+    socket.current.on("update-board", (data: any) => {
+      console.log("student gets updated pixel array", data);
+    });
+
+    socket.current.on("close-student", () => {
+      socket.current.close();
+      socket.current.disconnect();
+      console.log(stream);
+      stream?.getTracks().forEach((track) => {
+        track.enabled = false;
+        track.stop();
+      });
+      partnerVideo.current!.srcObject = null;
+      userVideo.current!.srcObject = null;
+    });
   };
 
   return (
     <div className="stdContainer text-center min-h-screen">
       <h1 className="text-sm sm:text-2xl md:text-3xl lg:text-4xl w-full mt-1 md:mt-10">
-        Good Morning, student!
+        Let's get learning, Students!
       </h1>
-      <div className="w-full">
-        {stream && (
-          <>
-            {callAccepted && (
-              <>
-                <div className="w-11/12 mx-auto overflow-scroll">
-                  <canvas
-                    ref={canvasRef}
-                    width={1280}
-                    height={720}
-                    className="border-solid border-2 border-black bg-white mx-auto"
-                  />
-                </div>
-                <video
-                  className="hidden"
-                  playsInline
-                  muted={false}
-                  ref={partnerVideo}
-                  autoPlay
+      {stream && (
+        <div className="w-full">
+          {callAccepted && (
+            <>
+              <div className="w-11/12 mx-auto overflow-scroll">
+                <canvas
+                  ref={canvasRef}
+                  width={1280}
+                  height={720}
+                  className="border-solid border-2 border-black bg-white mx-auto"
                 />
-              </>
-            )}
-            {stream && (
+              </div>
+              <video
+                className="hidden"
+                playsInline
+                muted={false}
+                ref={partnerVideo}
+                autoPlay
+              />
               <video
                 className="hidden"
                 playsInline
@@ -152,41 +165,39 @@ const Student = () => {
                 ref={userVideo}
                 autoPlay
               />
-            )}
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      )}
 
-      <div className="mx-auto">
-        {!callAccepted && (
-          <form onSubmit={joinRoomHandler}>
-            <input
-              type="text"
-              ref={joinRoomInput}
-              className="stdBorder pl-4 py-3"
-              name="room-code"
-              placeholder="Room Code"
-            />
-            {receivingCall ? (
-              <>
-                <button
-                  onClick={acceptCallHandler}
-                  className="stdButton"
-                  type="button"
-                >
-                  Join Room
-                </button>
-              </>
-            ) : (
-              <>
-                <button type="submit" className="stdButton">
-                  Find Room
-                </button>
-              </>
-            )}
-          </form>
-        )}
-      </div>
+      {!callAccepted && (
+        <form onSubmit={joinRoomHandler} className="mx-auto">
+          <input
+            type="text"
+            ref={joinRoomInput}
+            className="text-sm sm:text-base md:text-xl stdBorder pl-4 py-3"
+            name="room-code"
+            placeholder="Room Code"
+          />
+          {receivingCall ? (
+            <>
+              <button
+                onClick={acceptCallHandler}
+                className="stdButton"
+                type="button"
+              >
+                Join Room
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="submit" className="stdButton">
+                Find Room
+              </button>
+            </>
+          )}
+        </form>
+      )}
     </div>
   );
 };
