@@ -15,6 +15,8 @@ const Teacher = () => {
   const [imgSrc, setImgSrc] = useState<string>("");
   const [isResponse, setIsResponse] = useState<boolean>(false);
   const [isApproved, setIsApproved] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(5);
+  const [showCountdown, setShowCountdown] = useState<boolean>(false);
 
   const socket = useRef<any>();
   const partnerVideo = useRef<any>();
@@ -37,10 +39,17 @@ const Teacher = () => {
   }, []);
 
   const capture = useCallback(() => {
-    // setTimeout(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setImgSrc(imageSrc);
-    // }, 5000);
+    setShowCountdown(true);
+    setCountdown(5);
+    setTimeout(() => {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setImgSrc(imageSrc);
+      clearInterval(countdownInterval);
+      setShowCountdown(false);
+    }, 5000);
+    const countdownInterval = setInterval(() => {
+      setCountdown((prevCount) => prevCount - 1);
+    }, 1000);
   }, [webcamRef, setImgSrc]);
 
   const createRoomHandler = () => {
@@ -145,6 +154,9 @@ const Teacher = () => {
           <>
             {!imgSrc ? (
               <>
+                {showCountdown && (
+                  <p className="text-2xl">Clicking in: {countdown}</p>
+                )}
                 <Webcam
                   audio={false}
                   ref={webcamRef}
