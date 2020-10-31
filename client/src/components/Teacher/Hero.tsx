@@ -9,6 +9,8 @@ const Teacher = () => {
   const [stream, setStream] = useState<MediaStream>();
   const [roomCode, setRoomCode] = useState<string>("");
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
+  const [isTeacherReady, setIsTeacherReady] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imgSrc, setImgSrc] = React.useState<string>("");
 
   const socket = useRef<any>();
@@ -36,6 +38,7 @@ const Teacher = () => {
   }, [webcamRef, setImgSrc]);
 
   const createRoomHandler = () => {
+    setIsLoading(true);
     socket.current.emit(
       "create-room",
       {
@@ -71,9 +74,13 @@ const Teacher = () => {
       },
       stream,
     });
+
     peer.on("signal", (data) => {
       ownSignal = data;
+      setIsTeacherReady(true);
+      setIsLoading(false);
     });
+
     socket.current.on("fetch-teacher", () => {
       console.log("student has fetched teacher");
       console.log("sent offer SDP to room:", _roomId, ", offer:", ownSignal);
@@ -150,9 +157,9 @@ const Teacher = () => {
               onClick={createRoomHandler}
               className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
             >
-              Create Room
+              {!isLoading ? "Create Room" : "Loading"}
             </button>
-            {roomCode && (
+            {isTeacherReady && roomCode && (
               <h3 className="text-lg">
                 Your Room Code is :{" "}
                 <span className="font-bold text-xl">{roomCode}</span>
