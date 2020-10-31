@@ -5,7 +5,6 @@ import Webcam from "react-webcam";
 
 const Teacher = () => {
   const [yourID, setYourID] = useState<string>("");
-  const [isMute, setIsMute] = useState<boolean>(false);
   const [stream, setStream] = useState<MediaStream>();
   const [roomCode, setRoomCode] = useState<string>("");
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
@@ -104,9 +103,8 @@ const Teacher = () => {
     });
   };
 
-  const toggleIsMuteHandler = () => {
-    setIsMute(!isMute);
-    stream!.getAudioTracks()[0].enabled = !isMute;
+  const disconnect = () => {
+    socket.current.emit("close-room", { roomCode });
   };
 
   const postImage = (imageData: string) => {
@@ -187,12 +185,10 @@ const Teacher = () => {
               autoPlay
             />
             <button
-              onClick={toggleIsMuteHandler}
-              className={`rounded-md py-3 px-4 my-5 outline-none text-white focus:outline-none mx-auto ${
-                isMute ? " bg-green-400" : " bg-red-400"
-              }`}
+              onClick={disconnect}
+              className="rounded-md py-3 px-4 my-5 outline-none text-white focus:outline-none mx-auto bg-red-400"
             >
-              {isMute ? "Unmute" : "Mute"}
+              Disconnect
             </button>
           </>
         )}
