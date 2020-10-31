@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Peer from "simple-peer";
 import io from "socket.io-client";
+import Webcam from "react-webcam";
 
 const Teacher = () => {
   const [yourID, setYourID] = useState<string>("");
@@ -11,9 +12,12 @@ const Teacher = () => {
   const [ownSignal, setOwnSignal] = useState<any>({});
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
 
+  const [imgSrc, setImgSrc] = React.useState<string>("");
+
   const socket = useRef<any>();
-  const userVideo = useRef<any>();
   const partnerVideo = useRef<any>();
+
+  const webcamRef = useRef<any>(null);
 
   useEffect(() => {
     socket.current = io.connect();
@@ -26,15 +30,12 @@ const Teacher = () => {
       .then((stream) => {
         setStream(stream);
       });
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
-      .then((stream) => {
-        if (userVideo.current) {
-          userVideo.current.srcObject = stream;
-        }
-      });
   }, []);
+
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImgSrc(imageSrc);
+  }, [webcamRef, setImgSrc]);
 
   const createRoomHandler = () => {
     socket.current.emit(
@@ -59,14 +60,14 @@ const Teacher = () => {
       config: {
         iceServers: [
           {
-            urls: "stun:numb.viagenie.ca",
-            username: "sultan1640@gmail.com",
-            credential: "98376683",
+            urls: process.env.REACT_APP_STUN_URLS,
+            username: process.env.REACT_APP_STUN_USERNAME,
+            credential: process.env.REACT_APP_STUN_CREDENTIALS,
           },
           {
-            urls: "turn:numb.viagenie.ca",
-            username: "sultan1640@gmail.com",
-            credential: "98376683",
+            urls: process.env.REACT_APP_TURN_URLS,
+            username: process.env.REACT_APP_TURN_USERNAME,
+            credential: process.env.REACT_APP_TURN_CREDENTIALS,
           },
         ],
       },
@@ -110,19 +111,37 @@ const Teacher = () => {
     setIsMute(!isMute);
   };
 
+  const postImage = (imageData: string) => {
+    console.log(
+      "base64 data uri of image to be sent",
+      imageData.substring(0, 100),
+      "..."
+    );
+  };
+
   return (
     <>
       <h1>THIS IS TEACHER</h1>
       <div>
         <div>
           {stream && (
-            <video
-              className="stdBorder"
-              playsInline
-              muted
-              ref={userVideo}
-              autoPlay
-            />
+            <>
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                className="stdBorder"
+              />
+              <button onClick={capture}>Capture photo</button>
+              {imgSrc && (
+                <>
+                  <img src={imgSrc} />
+                  <button onClick={() => postImage(imgSrc)}>
+                    send picture
+                  </button>
+                </>
+              )}
+            </>
           )}
         </div>
         <div>
