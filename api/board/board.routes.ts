@@ -12,6 +12,10 @@ const handlePostCalibrate = async (
 ) => {
   try {
     const { boardImg, roomId } = req.body as postRequest;
+    await genImageAndStore(boardImg, roomId);
+    res.json({
+      success: true,
+    });
   } catch (err) {
     next(err);
   }

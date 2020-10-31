@@ -1,4 +1,4 @@
-import fs from "fs/promises";
+import { promises as fs } from "fs";
 import { join } from "path";
 
 export const genImageAndStore = async (boardImg: string, roomId: string) => {
