@@ -3,6 +3,8 @@ import Peer from "simple-peer";
 import io from "socket.io-client";
 import Webcam from "react-webcam";
 
+import { postCalibration } from "../../services/axios";
+
 const Teacher = () => {
   const [yourID, setYourID] = useState<string>("");
   const [stream, setStream] = useState<MediaStream>();
@@ -108,12 +110,10 @@ const Teacher = () => {
   };
 
   const postImage = (imageData: string) => {
-    console.log(
-      "base64 data uri of image to be sent",
-      imageData.substring(0, 100),
-      "..."
-    );
-    setImgSrc("");
+    console.log("base64 data uri of image to be sent", imageData, "...");
+    postCalibration({ roomId: roomCode, boardImg: imageData }).then(() => {
+      setImgSrc("");
+    });
   };
 
   return (
