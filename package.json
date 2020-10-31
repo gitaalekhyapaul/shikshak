@@ -1,0 +1,22 @@
+{
+  "name": "aaruush-org",
+  "version": "1.0.0",
+  "description": "Official Website of A'20",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jagnani73/react-typescript-tailwind.git"
+  },
+  "author": "jagnani73",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jagnani73/react-typescript-tailwind/issues"
+  },
+  "homepage": "https://github.com/jagnani73/react-typescript-tailwind#readme",
+  "devDependencies": {
+    "typescript": "^4.0.2"
+  }
+}
