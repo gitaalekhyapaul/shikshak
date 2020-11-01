@@ -104,7 +104,7 @@ def Cor_point(rescaled_image):
 
 
 def findPoints(uid, path):
-    # try:
+    try:
         size = 500
 
         image = cv2.imread(path)
@@ -134,7 +134,7 @@ def findPoints(uid, path):
             cv2.imshow("new", image)
             # cv2.waitKey(0)
         return True
-    # except:
+    except:
         print("Error in find points")
         return False
 
@@ -144,14 +144,14 @@ def pixeldata(img):
     boool = (img != 255)
     for i in range(boool.shape[0]):
         for j in range(boool.shape[1]):
-            if boool[j,i] == True:
-                el.append([i,j])
+            if boool[i,j] == True:
+                el.append([j,i])
 
     return el
 
 
 def convert(uid, path):
-    try:
+    # try:
         image = cv2.imread(path)
 
         IM_HEIGHT, IM_WIDTH, _ = image.shape
@@ -185,7 +185,7 @@ def convert(uid, path):
             cv2.waitKey(0)
 
         return z, True,IM_HEIGHT, IM_WIDTH
-    except:
+    # except:
         print("Error in the Convert file")
         return -1, False
 

@@ -48,7 +48,9 @@ const handlePostEmit = async (
     if (pixelArray) {
       const io = await SocketService.getInstance().getIO();
       io.to(roomId).emit("update-board", {
-        data: pixelArray,
+        data: pixelArray.data,
+        height: pixelArray.height,
+        width: pixelArray.width,
       });
       res.json({
         success: true,
