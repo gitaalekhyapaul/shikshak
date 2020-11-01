@@ -182,7 +182,7 @@ const Teacher = () => {
                   screenshotFormat="image/jpeg"
                   className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5 shadow-2xl"
                   screenshotQuality={1}
-                  mirrored={true}
+                  mirrored={false}
                 />
                 {isTeacherReady && !isApproved && (
                   <button onClick={capture} className="stdButton">
