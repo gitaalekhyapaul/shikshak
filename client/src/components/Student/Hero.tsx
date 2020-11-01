@@ -9,6 +9,7 @@ const Student = () => {
   const [receivingCall, setReceivingCall] = useState<boolean>(false);
   const [teacherSignal, setTeacherSignal] = useState<any>();
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
+  const [isDisconnect, setIsDisconnect] = useState<boolean>(false);
 
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const partnerVideo = useRef<HTMLVideoElement | null>(null);
@@ -131,6 +132,7 @@ const Student = () => {
       });
       partnerVideo.current!.srcObject = null;
       userVideo.current!.srcObject = null;
+      setIsDisconnect(true);
     });
   };
 
@@ -165,6 +167,17 @@ const Student = () => {
                 ref={userVideo}
                 autoPlay
               />
+              {isDisconnect && (
+                <>
+                  <p className="mt-3 text-xl">The meeting has ended.</p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
+                  >
+                    Join a different session
+                  </button>
+                </>
+              )}
             </>
           )}
         </div>

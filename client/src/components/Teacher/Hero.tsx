@@ -129,6 +129,7 @@ const Teacher = () => {
       track.stop();
     });
     partnerVideo.current!.srcObject = null;
+    window.location.reload();
   };
 
   const postImage = (imageData: string) => {
