@@ -3,7 +3,7 @@ import pickle
 class dbWithPick:
     def __init__(self,path):
         db = {}
-        self.path = path + "/pyDB.p"
+        self.path = path + "pyDB.p"
         pickle.dump(db, open(self.path, "wb"))
     
     def add_overwrite(self,uid,points):

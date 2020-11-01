@@ -38,3 +38,23 @@ export const calibrateBoard = async (
     else return false;
   }
 };
+
+export const generatePixelArray = async (
+  roomId: string,
+  fileKey: string
+): Promise<Array<Array<number>> | null> => {
+  try {
+    const { data: arrayData } = await Axios.post<{
+      success: boolean;
+      data: Array<Array<number>>;
+    }>(`http://127.0.0.1:${process.env.FLASK_PORT}/api/convert`, {
+      roomId,
+      fileKey,
+    });
+    if (arrayData.success) return arrayData.data;
+    else throw errors.UNAUTHORIZED;
+  } catch (err) {
+    if (!err.response) throw errors.INTERNAL_SERVER_ERROR;
+    else return null;
+  }
+};

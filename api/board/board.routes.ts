@@ -5,6 +5,7 @@ import validateQuery from "../middlewares/validate-query";
 import { PostRequestSchema, postRequest } from "./board.schema";
 import {
   calibrateBoard,
+  generatePixelArray,
   genImageAndStore,
   genImageDataURI,
 } from "./board.service";
@@ -43,14 +44,16 @@ const handlePostEmit = async (
   try {
     const { boardImg, roomId } = req.body as postRequest;
     const fileKey = await genImageAndStore(boardImg, roomId);
-    //FIXME Handle Axios to Flask::Return Image PixelArray
-    const io = await SocketService.getInstance().getIO();
-    io.to(roomId).emit("update-board", {
-      data: "board is updated by teacher",
-    });
-    res.json({
-      success: true,
-    });
+    const pixelArray = await generatePixelArray(roomId, fileKey);
+    if (pixelArray) {
+      const io = await SocketService.getInstance().getIO();
+      io.to(roomId).emit("update-board", {
+        data: pixelArray,
+      });
+      res.json({
+        success: true,
+      });
+    }
     Promise.all([fs.unlink(fileKey)]).catch((err) => {
       console.log(`FileDeleteError for file '${fileKey}'`);
     });
