@@ -7,7 +7,6 @@ import transform
 
 from SpecialDB import dbWithPick
 
-
 def avg(A):
     l = len(A)
     if l == 0:
@@ -77,11 +76,9 @@ def Cor_point(rescaled_image):
 
     IM_HEIGHT, IM_WIDTH, _ = rescaled_image.shape
 
-    # convert the image to grayscale and blur it slightly
     gray = cv2.cvtColor(rescaled_image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (7, 7), 0)
 
-    # dilate helps to remove potential holes between edge segments
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (MORPH, MORPH))
     dilated = cv2.dilate(gray, kernel)
 
