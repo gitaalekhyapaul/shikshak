@@ -123,3 +123,4 @@ __pycache__
 .vscode
 store/*
 !store/.gitkeep
+pyDB.p
