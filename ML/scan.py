@@ -104,7 +104,7 @@ def Cor_point(rescaled_image):
 
 
 def findPoints(uid, path):
-    try:
+    # try:
         size = 500
 
         image = cv2.imread(path)
@@ -134,7 +134,7 @@ def findPoints(uid, path):
             cv2.imshow("new", image)
             # cv2.waitKey(0)
         return True
-    except:
+    # except:
         print("Error in find points")
         return False
 

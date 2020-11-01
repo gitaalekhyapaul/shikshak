@@ -3,8 +3,13 @@ import { promises as fs } from "fs";
 
 import validateQuery from "../middlewares/validate-query";
 import { PostRequestSchema, postRequest } from "./board.schema";
-import { genImageAndStore, genImageDataURI } from "./board.service";
+import {
+  calibrateBoard,
+  genImageAndStore,
+  genImageDataURI,
+} from "./board.service";
 import { SocketService } from "../services/socket.service";
+import { errors } from "../error/error.constant";
 
 const router: Router = Router();
 
@@ -16,7 +21,8 @@ const handlePostCalibrate = async (
   try {
     const { boardImg, roomId } = req.body as postRequest;
     const fileKey = await genImageAndStore(boardImg, roomId);
-    //FIXME Handle Axios to Flask::Return Modified Image
+    const calibrated = await calibrateBoard(roomId, fileKey);
+    if (!calibrated) throw errors.INTERNAL_SERVER_ERROR;
     const responseDataURI = await genImageDataURI(fileKey);
     res.json({
       imgUri: responseDataURI,

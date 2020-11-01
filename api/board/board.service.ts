@@ -2,6 +2,8 @@ import { promises as fs } from "fs";
 import { join } from "path";
 import dataURIToBuffer from "data-uri-to-buffer";
 import buffertoDataURI from "datauri";
+import Axios from "axios";
+import { errors } from "../error/error.constant";
 
 export const genImageAndStore = async (
   boardImg: string,
@@ -16,4 +18,23 @@ export const genImageAndStore = async (
 export const genImageDataURI = async (fileKey: string): Promise<string> => {
   const uri = await buffertoDataURI(fileKey);
   return uri!;
+};
+
+export const calibrateBoard = async (
+  roomId: string,
+  fileKey: string
+): Promise<boolean> => {
+  try {
+    const { data } = await Axios.post<{ success: boolean }>(
+      `http://127.0.0.1:${process.env.FLASK_PORT}/api/calibrate-board`,
+      {
+        roomId,
+        fileKey,
+      }
+    );
+    return data.success;
+  } catch (err) {
+    if (!err.response) throw errors.INTERNAL_SERVER_ERROR;
+    else return false;
+  }
 };
