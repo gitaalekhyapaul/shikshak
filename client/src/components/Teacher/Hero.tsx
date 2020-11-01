@@ -129,6 +129,7 @@ const Teacher = () => {
       track.stop();
     });
     partnerVideo.current!.srcObject = null;
+    window.location.reload();
   };
 
   const postImage = (imageData: string) => {
@@ -166,7 +167,13 @@ const Teacher = () => {
             {!imgSrc ? (
               <>
                 {showCountdown && (
-                  <p className="text-2xl">Capturing in: {countdown}</p>
+                  <>
+                    <p className="text-2xl">
+                      Capturing in:{" "}
+                      <span className="font-bold">{countdown}</span>
+                    </p>
+                    <p className="text-2xl pb-2">Please move away</p>
+                  </>
                 )}
                 <Webcam
                   audio={false}
@@ -175,10 +182,11 @@ const Teacher = () => {
                   screenshotFormat="image/jpeg"
                   className="stdBorder mx-auto w-11/12 md:3/4 lg:w-2/5 shadow-2xl"
                   screenshotQuality={1}
+                  mirrored={true}
                 />
                 {isTeacherReady && !isApproved && (
                   <button onClick={capture} className="stdButton">
-                    Capture Board
+                    Calibrate Board
                   </button>
                 )}
               </>
@@ -222,7 +230,7 @@ const Teacher = () => {
               <>
                 {isApproved && (
                   <button className="stdButton" onClick={sendBoard}>
-                    Send Board
+                    Capture Board
                   </button>
                 )}
                 <h3 className="text-lg">

@@ -9,6 +9,9 @@ const Student = () => {
   const [receivingCall, setReceivingCall] = useState<boolean>(false);
   const [teacherSignal, setTeacherSignal] = useState<any>();
   const [callAccepted, setCallAccepted] = useState<boolean>(false);
+  const [isDisconnect, setIsDisconnect] = useState<boolean>(false);
+  const [lookingForRoom, setLookingForRoom] = useState<boolean>(false);
+  const [roomFound, setRoomFound] = useState<boolean>();
 
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const partnerVideo = useRef<HTMLVideoElement | null>(null);
@@ -69,6 +72,7 @@ const Student = () => {
       },
       callOfferhandler
     );
+    setLookingForRoom(true);
   };
 
   const callOfferhandler = (data: {
@@ -86,8 +90,10 @@ const Student = () => {
         console.log("student receives teacher offer", data.signalData);
         setReceivingCall(true);
         setTeacherSignal(data.signalData);
+        setRoomFound(true);
       });
     } else {
+      setRoomFound(false);
       console.log(data.error);
     }
   };
@@ -131,6 +137,7 @@ const Student = () => {
       });
       partnerVideo.current!.srcObject = null;
       userVideo.current!.srcObject = null;
+      setIsDisconnect(true);
     });
   };
 
@@ -139,64 +146,80 @@ const Student = () => {
       <h1 className="text-sm sm:text-2xl md:text-3xl lg:text-4xl w-full mt-1 md:mt-10">
         Let's get learning, Students!
       </h1>
-      {stream && (
+      {stream && callAccepted && (
         <div className="w-full">
-          {callAccepted && (
-            <>
-              <div className="w-11/12 mx-auto overflow-scroll">
-                <canvas
-                  ref={canvasRef}
-                  width={1280}
-                  height={720}
-                  className="border-solid border-2 border-black bg-white mx-auto"
-                />
-              </div>
-              <video
-                className="hidden"
-                playsInline
-                muted={false}
-                ref={partnerVideo}
-                autoPlay
+          <>
+            <div className="w-11/12 mx-auto overflow-scroll">
+              <canvas
+                ref={canvasRef}
+                width={1280}
+                height={720}
+                className="border-solid border-2 border-black bg-white mx-auto"
               />
-              <video
-                className="hidden"
-                playsInline
-                muted={true}
-                ref={userVideo}
-                autoPlay
-              />
-            </>
-          )}
+            </div>
+            <video
+              className="hidden"
+              playsInline
+              muted={false}
+              ref={partnerVideo}
+              autoPlay
+            />
+            <video
+              className="hidden"
+              playsInline
+              muted={true}
+              ref={userVideo}
+              autoPlay
+            />
+            {isDisconnect && (
+              <>
+                <p className="mt-3 text-xl">The meeting has ended.</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="rounded-md py-3 px-4 my-5 outline-none text-white bg-red-400 focus:outline-none mx-4"
+                >
+                  Join a different session
+                </button>
+              </>
+            )}
+          </>
         </div>
       )}
 
       {!callAccepted && (
-        <form onSubmit={joinRoomHandler} className="mx-auto">
-          <input
-            type="text"
-            ref={joinRoomInput}
-            className="text-sm sm:text-base md:text-xl stdBorder pl-4 py-3"
-            name="room-code"
-            placeholder="Room Code"
-          />
-          {receivingCall ? (
-            <>
-              <button
-                onClick={acceptCallHandler}
-                className="stdButton"
-                type="button"
-              >
-                Join Room
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="submit" className="stdButton">
-                Find Room
-              </button>
-            </>
-          )}
-        </form>
+        <>
+          <form onSubmit={joinRoomHandler} className="mx-auto">
+            {lookingForRoom && (
+              <p className="text-xl text-center w-full">
+                {roomFound ? "Room found" : "Room not found"}
+              </p>
+            )}
+            <input
+              type="text"
+              ref={joinRoomInput}
+              className="text-sm sm:text-base md:text-xl stdBorder pl-4 py-3"
+              name="room-code"
+              placeholder="Room Code"
+            />
+            {receivingCall ? (
+              <>
+                <button
+                  onClick={acceptCallHandler}
+                  className="stdButton"
+                  type="button"
+                >
+                  Join Room
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="submit" className="stdButton">
+                  Find Room
+                </button>
+              </>
+            )}
+          </form>
+        </>
       )}
     </div>
   );
