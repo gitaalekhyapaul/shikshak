@@ -13,6 +13,8 @@ const Student = () => {
   const [lookingForRoom, setLookingForRoom] = useState<boolean>(false);
   const [roomFound, setRoomFound] = useState<boolean>();
   const [pixelArray, setPixelArray] = useState<[number, number][]>([]);
+  const [height, setCanvasHeight] = useState<number>();
+  const [width, setCanvasWidth] = useState<number>();
 
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const partnerVideo = useRef<HTMLVideoElement | null>(null);
@@ -39,7 +41,7 @@ const Student = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    var imgData = ctx?.createImageData(3, 3);
+    var imgData = ctx?.createImageData(1, 1);
     if (imgData) {
       for (var i = 0; i < imgData.data.length; i += 4) {
         imgData.data[i + 0] = 0;
@@ -47,6 +49,8 @@ const Student = () => {
         imgData.data[i + 2] = 0;
         imgData.data[i + 3] = 255;
       }
+      //@ts-ignore
+      ctx.clearRect(0, 0, width, height);
       //@ts-ignore
       pixelArray.map((point) => ctx.putImageData(imgData, point[0], point[1]));
     }
@@ -118,6 +122,8 @@ const Student = () => {
     socket.current.on("update-board", (data: any) => {
       console.log("student gets updated pixel array", data);
       setPixelArray(data.data);
+      setCanvasHeight(data.height);
+      setCanvasWidth(data.width);
     });
 
     socket.current.on("close-student", () => {
@@ -145,8 +151,8 @@ const Student = () => {
             <div className="w-11/12 mx-auto overflow-scroll">
               <canvas
                 ref={canvasRef}
-                width={1280}
-                height={720}
+                height={height}
+                width={width}
                 className="border-solid border-2 border-black bg-white mx-auto"
               />
             </div>
