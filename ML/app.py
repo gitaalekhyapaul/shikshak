@@ -30,9 +30,9 @@ def index2():
         req = request.get_json()
         r1 = req["roomId"]
         r2 = req["fileKey"]
-        z, check = demo.convert(r1, r2)
+        z, check,h,w = demo.convert(r1, r2)
         if check:
-            return json.dumps({"success": True, "data": z}), 200
+            return json.dumps({"success": True, "data": z,"height":h,"width":w}), 200
 
         else:
             return {"success": False}, 401

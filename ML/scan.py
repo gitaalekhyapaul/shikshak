@@ -144,7 +144,7 @@ def pixeldata(img):
     boool = (img != 255)
     for i in range(boool.shape[0]):
         for j in range(boool.shape[1]):
-            if boool[i,j] == True:
+            if boool[j,i] == True:
                 el.append([i,j])
 
     return el
@@ -153,6 +153,8 @@ def pixeldata(img):
 def convert(uid, path):
     try:
         image = cv2.imread(path)
+
+        IM_HEIGHT, IM_WIDTH, _ = image.shape
 
         A, B, C, D = db.getpoints(uid)
 
@@ -182,7 +184,7 @@ def convert(uid, path):
             cv2.imshow("new", thresh)
             cv2.waitKey(0)
 
-        return z, True
+        return z, True,IM_HEIGHT, IM_WIDTH
     except:
         print("Error in the Convert file")
         return -1, False
