@@ -193,7 +193,7 @@ PROD = False
 db = dbWithPick("./")
 
 if __name__ == "__main__":
-    path = "ML/WhatsApp Image 2020-11-01 at 6.36.51 AM (1).jpeg"
+    path = "ML/Test5.jpg"
     uid = "resderf"
 
     print("Starting")
