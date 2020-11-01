@@ -12,6 +12,7 @@ const Student = () => {
   const [isDisconnect, setIsDisconnect] = useState<boolean>(false);
   const [lookingForRoom, setLookingForRoom] = useState<boolean>(false);
   const [roomFound, setRoomFound] = useState<boolean>();
+  const [pixelArray, setPixelArray] = useState<[number, number][]>([]);
 
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const partnerVideo = useRef<HTMLVideoElement | null>(null);
@@ -47,18 +48,9 @@ const Student = () => {
         imgData.data[i + 3] = 255;
       }
       //@ts-ignore
-      points.map((point) => ctx.putImageData(imgData, point[0], point[1]));
+      pixelArray.map((point) => ctx.putImageData(imgData, point[0], point[1]));
     }
   });
-
-  const points = [
-    [10, 10],
-    [10, 16],
-    [100, 100],
-    [200, 200],
-    [200, 300],
-    [200, 500],
-  ];
 
   const joinRoomHandler = (e: FormEvent) => {
     e.preventDefault();
@@ -125,6 +117,7 @@ const Student = () => {
 
     socket.current.on("update-board", (data: any) => {
       console.log("student gets updated pixel array", data);
+      setPixelArray(data.data);
     });
 
     socket.current.on("close-student", () => {
