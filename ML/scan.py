@@ -7,7 +7,6 @@ import transform
 
 from SpecialDB import dbWithPick
 
-
 def avg(A):
     l = len(A)
     if l == 0:
@@ -78,11 +77,9 @@ def Cor_point(rescaled_image):
 
     IM_HEIGHT, IM_WIDTH, _ = rescaled_image.shape
 
-    # convert the image to grayscale and blur it slightly
     gray = cv2.cvtColor(rescaled_image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (7, 7), 0)
 
-    # dilate helps to remove potential holes between edge segments
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (MORPH, MORPH))
     dilated = cv2.dilate(gray, kernel)
 
@@ -136,7 +133,6 @@ def findPoints(uid, path):
         else:
             cv2.namedWindow('new', cv2.WINDOW_NORMAL)
             cv2.imshow("new", image)
-            #cv2.waitKey(0)
         return True
     except:
         print("Error in find points")
@@ -163,11 +159,9 @@ def convert(uid,path):
 
     gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
 
-    # sharpen image
     sharpen = cv2.GaussianBlur(gray, (0,0), 3)
     sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
 
-    # apply adaptive threshold to get black and white effect
     thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
 
     if PROD:
@@ -193,4 +187,3 @@ if __name__ == "__main__":
     convert(uid,path)
 
     print("Exiting")
-
