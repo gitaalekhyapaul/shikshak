@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <div
-      className="hidden md:block w-full fixed bottom-0 left-0 text-center text-xl py-2"
+      className="hidden md:block w-full text-center text-xl py-2"
       style={{ backgroundColor: "#BEDCF0" }}
     >
       <p>
