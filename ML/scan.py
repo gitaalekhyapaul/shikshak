@@ -70,7 +70,6 @@ def Conditions(Points, height, width):
 
 def Cor_point(rescaled_image):
 
-
     MORPH = 9
     CANNY = 84
     HOUGH = 25
@@ -121,7 +120,7 @@ def findPoints(uid, path):
         A, B, C, D = list(
             map(lambda x: ((int(x[0]*ratio), int(x[1]*ratio))), [A, B, C, D]))
 
-        db.add_overwrite(uid,[A, B, C, D])
+        db.add_overwrite(uid, [A, B, C, D])
 
         cv2.line(image, A, B, (128, 255, 64), 5)
         cv2.line(image, D, C, (128, 255, 64), 5)
@@ -133,57 +132,74 @@ def findPoints(uid, path):
         else:
             cv2.namedWindow('new', cv2.WINDOW_NORMAL)
             cv2.imshow("new", image)
+            # cv2.waitKey(0)
         return True
     except:
         print("Error in find points")
-        return False 
-    
+        return False
+
 
 def pixeldata(img):
-    print(img)
+    el = []
+    boool = (img != 255)
+    for i in range(boool.shape[0]):
+        for j in range(boool.shape[1]):
+            if boool[i,j] == True:
+                el.append([i,j])
 
-def convert(uid,path):
-    
-    image = cv2.imread(path)
+    return el
 
-    A,B,C,D = db.getpoints(uid)
 
-    countours = np.array([
-        [A[0],A[1]],
-        [B[0],B[1]],
-        [C[0],C[1]],
-        [D[0],D[1]]
-    ],dtype = np.int32)
+def convert(uid, path):
+    try:
+        image = cv2.imread(path)
 
-    warped = transform.four_point_transform(image, countours)
+        A, B, C, D = db.getpoints(uid)
 
-    gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+        countours = np.array([
+                [A[0], A[1]],
+                [B[0], B[1]],
+                [C[0], C[1]],
+                [D[0], D[1]]
+            ], dtype=np.int32)
 
-    sharpen = cv2.GaussianBlur(gray, (0,0), 3)
-    sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
+        warped = transform.four_point_transform(image, countours)
 
-    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
+        gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
 
-    if PROD:
-        cv2.imwrite(path, image)
-    else:
-        cv2.namedWindow('new', cv2.WINDOW_NORMAL)
-        cv2.imshow("new", thresh)
-        cv2.waitKey(0)
-    return True
+        # sharpen image
+        sharpen = cv2.GaussianBlur(gray, (0, 0), 3)
+        sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
+
+         # apply adaptive threshold to get black and white effect
+        thresh = cv2.adaptiveThreshold(
+            gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
+
+        z = pixeldata(thresh)
+
+        if PROD != True:
+            cv2.namedWindow('new', cv2.WINDOW_NORMAL)
+            cv2.imshow("new", thresh)
+            cv2.waitKey(0)
+
+        return thresh
+    except:
+        print("Error in the Convert file")
+        return -1
+
 
 PROD = False
 
 db = dbWithPick("./")
 
 if __name__ == "__main__":
-    path = "ML/WhatsApp Image 2020-11-01 at 6.36.51 AM (1).jpeg"
+    path = "ML/Test5.jpg"
     uid = "resderf"
 
     print("Starting")
 
     response = findPoints(uid, path)
     print(len(db))
-    convert(uid,path)
+    convert(uid, path)
 
     print("Exiting")
