@@ -182,13 +182,13 @@ def convert(uid, path):
             cv2.imshow("new", thresh)
             cv2.waitKey(0)
 
-        return thresh
+        return z, True
     except:
         print("Error in the Convert file")
-        return -1
+        return -1, False
 
 
-PROD = False
+PROD = True
 
 db = dbWithPick("./")
 
