@@ -3,6 +3,10 @@ import imutils
 import numpy as np
 import matplotlib.pyplot as plt
 
+import transform
+
+from SpecialDB import dbWithPick
+
 
 def avg(A):
     l = len(A)
@@ -120,93 +124,73 @@ def findPoints(uid, path):
         A, B, C, D = list(
             map(lambda x: ((int(x[0]*ratio), int(x[1]*ratio))), [A, B, C, D]))
 
+        db.add_overwrite(uid,[A, B, C, D])
+
         cv2.line(image, A, B, (128, 255, 64), 5)
         cv2.line(image, D, C, (128, 255, 64), 5)
         cv2.line(image, C, A, (128, 255, 64), 5)
         cv2.line(image, D, B, (128, 255, 64), 5)
-
 
         if PROD:
             cv2.imwrite(path, image)
         else:
             cv2.namedWindow('new', cv2.WINDOW_NORMAL)
             cv2.imshow("new", image)
-            cv2.waitKey(0)
+            #cv2.waitKey(0)
         return True
     except:
         print("Error in find points")
         return False 
     
+
+def pixeldata(img):
+    print(img)
+
 def convert(uid,path):
+    
+    image = cv2.imread(path)
+
     A,B,C,D = db.getpoints(uid)
 
-    contours = [np.array(
-        [
-            [A[0],A[1]],
-            [B[0],B[1]],
-            [D[0],D[1]],
-            [C[0],C[1]]
-        ],
-         dtype = np.int32)]
+    countours = np.array([
+        [A[0],A[1]],
+        [B[0],B[1]],
+        [C[0],C[1]],
+        [D[0],D[1]]
+    ],dtype = np.int32)
 
+    warped = transform.four_point_transform(image, countours)
 
+    gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
 
+    # sharpen image
+    sharpen = cv2.GaussianBlur(gray, (0,0), 3)
+    sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
 
+    # apply adaptive threshold to get black and white effect
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
+
+    if PROD:
+        cv2.imwrite(path, image)
+    else:
+        cv2.namedWindow('new', cv2.WINDOW_NORMAL)
+        cv2.imshow("new", thresh)
+        cv2.waitKey(0)
+    return True
 
 PROD = False
 
+db = dbWithPick("./")
+
 if __name__ == "__main__":
-    path = "ML/Test2.jpg"
+    path = "ML/WhatsApp Image 2020-11-01 at 6.36.51 AM (1).jpeg"
     uid = "resderf"
 
     print("Starting")
 
     response = findPoints(uid, path)
+    print(len(db))
+    convert(uid,path)
 
-    # res,h,w  = Cor_point(path)
-    # print(res)
-
-    # A,B,C,D = Conditions(res,h,w)
-
-    # image = cv2.imread(path)
-    # rescale = imutils.resize(image, height=int(500))
-
-    # # rescale[np.array(A)[:,1],np.array(A)[:,0]] = [0,0,255]
-
-    # # rescale[np.array(B)[:,1],np.array(B)[:,0]] = [0,255,0]
-    # # rescale[np.array(C)[:,1],np.array(C)[:,0]] = [255,0,0]
-    # # rescale[np.array(D)[:,1],np.array(D)[:,0]] = [255,255,0]
-
-    # # plt.plot(np.array(A)[:,1],np.array(A)[:,0],".")
-    # # plt.plot(np.array(B)[:,1],np.array(B)[:,0],".")
-    # # plt.plot(np.array(C)[:,1],np.array(C)[:,0],".")
-    # # plt.plot(np.array(D)[:,1],np.array(D)[:,0],".")
-
-    # # plt.show()
-
-    # cv2.namedWindow('new', cv2.WINDOW_NORMAL)
-
-    # rescale[res[:,1],res[:,0]] = [0,0,255]
-
-    # # cv2.line(rescale,(A[0],A[1]),(B[0],B[1]),100)
-    # # cv2.line(rescale,(D[0],D[1]),(C[0],C[1]),100)
-    # # cv2.line(rescale,(C[0],C[1]),(A[0],A[1]),100)
-    # # cv2.line(rescale,(D[0],D[1]),(B[0],B[1]),100)
-
-    contours = [np.array(
-        [
-            [A[0],A[1]],
-            [B[0],B[1]],
-            [D[0],D[1]],
-            [C[0],C[1]]
-        ],
-         dtype = np.int32)]
-
-    warped = transform.four_point_transform(orig, countours * )
-
-    # cv2.imshow('output',drawing)
-    # # cv2.imshow("new",rescale)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
     print("Exiting")
 
