@@ -1,16 +1,15 @@
 module.exports = {
   apps: [
     {
-      name: "HackThisFall-2020",
+      name: "Shikshak: Node.js Server",
       script: "./build/app.js",
       env: {
         NODE_ENV: "production",
       },
     },
     {
-      name: "HackThisFall-2020 Flask",
-      interpreter: "/usr/bin/python3.8",
-      script: "./ML/app.py",
+      name: "Shikshak: Flask Server",
+      script: "chmod +x ./run.sh && ./run.sh",
     },
   ],
 };

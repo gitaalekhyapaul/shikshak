@@ -1,17 +1,18 @@
 import pickle
 
+
 class dbWithPick:
-    def __init__(self,path):
+    def __init__(self, path):
         db = {}
         self.path = path + "pyDB.p"
         pickle.dump(db, open(self.path, "wb"))
-    
-    def add_overwrite(self,uid,points):
+
+    def add_overwrite(self, uid, points):
         db = self.load()
         db[uid] = points
         self.save(db)
 
-    def getpoints(self,uid):
+    def getpoints(self, uid):
         db = self.load()
         points = db[uid]
         return points
@@ -23,14 +24,14 @@ class dbWithPick:
     def load(self):
         return pickle.load(open(self.path, "rb"))
 
-    def save(self,db):
+    def save(self, db):
         pickle.dump(db, open(self.path, "wb"))
 
 
 if __name__ == "__main__":
     database = dbWithPick("./")
-    database.add_overwrite("FUCK",[[1,5],[8,9]])
-    database.add_overwrite("FcuK",[[1,9],[8,5],[56,34],[98,129]])
-    Z = database.getpoints("FUCK")
+    database.add_overwrite("TEST", [[1, 5], [8, 9]])
+    database.add_overwrite("TesT", [[1, 9], [8, 5], [56, 34], [98, 129]])
+    Z = database.getpoints("TEST")
     print(Z)
     print(len(database))

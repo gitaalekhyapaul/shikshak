@@ -1,2 +1,3 @@
-#!/usr/bin/sh
-python3.8 -m pip install -r requirements.txt
+#!/usr/bin/bash
+source ../env/bin/activate
+pip3 install -r requirements.txt

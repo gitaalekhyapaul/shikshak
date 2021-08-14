@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
 import pickle
-import json 
+from dotenv import load_dotenv
+import json, os
 import scan as demo
 
 app = Flask(__name__)
+load_dotenv()
 
 @app.route('/api/calibrate-board', methods = ['POST'])
 def index1():
@@ -38,4 +40,4 @@ def index2():
             return {"success": False}, 401
 
 if __name__ =="__main__":
-    app.run(host="0.0.0.0", port=4500, debug = True)
+    app.run(host="0.0.0.0", port=os.getenv("FLASK_PORT"), debug=True if os.getenv("FLASK_DEBUG") else False)
