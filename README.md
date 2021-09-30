@@ -1,4 +1,4 @@
-<p align="center"><img src="https://www.flaticon.com/svg/static/icons/svg/2762/2762438.svg" width="100" height="100"</p>
+<p align="center"><img src="./assets/Logo.png" width="100" height="100"</p>
 
 # **Shikshak** - HackThisFall'20
 
