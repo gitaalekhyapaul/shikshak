@@ -1,4 +1,4 @@
-<p align="center"><img src="./assets/Logo.png" width="100" height="100"</p>
+<p align="center"><img src="./assets/Logo.png" width="120" height="120"</p>
 
 # **Shikshak** - HackThisFall'20
 
