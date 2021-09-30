@@ -1,19 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.stdBorder {
-  @apply border-solid border-black rounded-lg border-2;
-}
+@layer base {
+  * {
+    transition: all 0.3s ease-out;
+  }
 
-.stdContainer {
-  @apply flex flex-wrap w-full;
-}
+  html,
+  body {
+    @apply m-0 p-0 font-sans-serif bg-alice-blue;
+  }
 
-.stdButton {
-  @apply bg-green-400 rounded-md py-3 px-4 my-5 outline-none mx-4 text-white;
-}
+  html,
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-.stdButton:focus {
-  @apply outline-none;
+  h1 {
+    @apply font-cursive;
+  }
+
+  .stdBorder {
+    @apply border-solid border-black rounded-lg border-2;
+  }
+
+  .stdContainer {
+    @apply flex flex-wrap w-full;
+  }
+
+  .stdButton {
+    @apply bg-green-400 rounded-md py-3 px-4 my-5 outline-none mx-4 text-white;
+  }
+
+  .stdButton:focus {
+    @apply outline-none;
+  }
 }

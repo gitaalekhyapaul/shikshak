@@ -4,7 +4,6 @@ import { Switch, Route, Link } from "react-router-dom";
 import Teacher from "./components/Teacher/Hero";
 import Student from "./components/Student/Hero";
 
-import "./App.css";
 import "./tailwind.css";
 
 const App = () => {

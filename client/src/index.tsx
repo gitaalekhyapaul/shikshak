@@ -6,7 +6,6 @@ import * as serviceWorker from "./serviceWorker";
 import Navbar from "./components/Shared/Navbar";
 import App from "./App";
 import Footer from "./components/Shared/Footer";
-import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
